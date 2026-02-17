@@ -46,6 +46,6 @@ while v3 != 0:
     table.add_row([u1, v1, u2, v2, u3, v3, q])
 
 print(table)
-
+print(gcd)
 
  
