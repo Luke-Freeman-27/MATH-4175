@@ -1,4 +1,3 @@
-import math
 from prettytable import PrettyTable
 
 #NAMES: Luke Freeman, Yoshwan Pathipati, Diego Penadillo, Hiren Sai Vellanki
@@ -8,9 +7,6 @@ from prettytable import PrettyTable
 # take input from the user
 a = int(input("Enter the first number: "))
 b = int(input("Enter the second number: "))
-
-# obtain the greatest common divisor of the two numbers
-gcd = math.gcd(a, b)
 
 # initalize all values for the divsion algorithm table
 u1 = 1
@@ -29,20 +25,25 @@ temp_u3 = 0
 
 # Create headers for the table
 table = PrettyTable(["u1", "v1", "u2", "v2", "u3", "v3", "q"])
+# Add the initial values to the table
 table.add_row([u1, v1, u2, v2, u3, v3, q])
 
 # While v3 is not 0, continue to loop through the divsion algorithm.
 while v3 != 0:
+    # Store the current u values in temp variables.
     temp_u1 = u1
     temp_u2 = u2
     temp_u3 = u3
+    # Calculate the quotient q.
     q = u3 // v3
+    # Assign v values to u values, and calculate the new v values using the temp u values.
     u1 = v1
     v1 = temp_u1 - q * v1
     u2 = v2
     v2 = temp_u2 - q * v2
     u3 = v3
     v3 = temp_u3 - q * v3
+    # Add the new values to the table.
     table.add_row([u1, v1, u2, v2, u3, v3, q])
 
 print(table)
@@ -52,6 +53,7 @@ print(table)
 x = u1
 y = u2
 
+# Print the results
 print(f"gcd({a}, {b}) = {u3}")
 print(f"x = {x}")
 print(f"y = {y}")
