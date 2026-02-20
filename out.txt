@@ -1,3 +1,6 @@
+MATH 4175 Project 1
+By Luke Freeman, Yoshwan Pathipati, Diego Penadillo, Hiren Sai Vellanki
+
 GCD(512224, 132128) Output:
 Enter the first number: 512224
 Enter the second number: 132128
