@@ -2,10 +2,10 @@
 
 #PURPOSE: Vigenere cipher cryptanalysis - IC analysis, key recovery, and decryption.
 
-# Open file and read cyphertext
+# Open file and read ciphertext
 # File is one line of text with no newline characters.
-file = open("cyphertext.md", "r")
-cyphertext = file.read().strip().upper()
+file = open("ciphertext.md", "r")
+ciphertext = file.read().strip().upper()
 file.close()
 
 # PART 1: Index of Coincidence analysis for m = 6, 7, 8
@@ -18,12 +18,12 @@ for m in [6, 7, 8]:
     print(f"m = {m}")
     print(f"{'='*40}")
 
-    # Split the cyphertext into m substrings (cosets)
+    # Split the ciphertext into m substrings (cosets)
     substrings = []
     for i in range(m):
         substring = ""
-        for j in range(i, len(cyphertext), m):
-            substring += cyphertext[j]
+        for j in range(i, len(ciphertext), m):
+            substring += ciphertext[j]
         substrings.append(substring)
 
     # Calculate and print the Index of Coincidence for each substring
@@ -61,8 +61,8 @@ m = 7
 substrings = []
 for i in range(m):
     substring = ""
-    for j in range(i, len(cyphertext), m):
-        substring += cyphertext[j]
+    for j in range(i, len(ciphertext), m):
+        substring += ciphertext[j]
     substrings.append(substring)
 
 # Empty string to build the keyword
@@ -112,8 +112,8 @@ key = [ord(k) - ord('A') for k in keyword]
 
 plaintext = ""
 
-# Decrypt each letter in the cyphertext
-for i, ch in enumerate(cyphertext):
+# Decrypt each letter in the ciphertext
+for i, ch in enumerate(ciphertext):
     if ch.isalpha():
         p = (ord(ch) - ord('A') - key[i % len(key)]) % 26
         plaintext += chr(p + ord('a'))
