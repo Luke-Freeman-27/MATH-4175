@@ -1,0 +1,95 @@
+MATH 4175 — Project 3 (typed submission draft)
+Names: Luke Freeman, Yoshwan Pathipati, Diego Penadillo, Hiren Sai Vellanki
+
+----------------------------------------------------------------------
+1. Normalized linear approximation table
+----------------------------------------------------------------------
+
+We implemented the 8×8 table with entries NL(a,b) − 4 for a,b ∈ {0,…,7}
+(see NLATCalculation.py or run: python project3_complete.py).
+Export the PrettyTable output to PDF for submission.
+
+----------------------------------------------------------------------
+2. Linear approximation trail (sketch in separate PDF)
+----------------------------------------------------------------------
+
+Cipher: three rounds + final XOR with K4 (Figure 1). After each S-layer the
+6-bit permutation sends
+  D1=B1, D2=B3, D3=B5, D4=B2, D5=B4, D6=B6
+(same for F→G).
+
+Plaintext mask for P1⊕P2⊕P4⊕P5 (with P1 the LEFTmost handout bit):
+  (1,1,0,1,1,0) on (A1…A6) after XOR with K1.
+
+Round 1 — both active S-boxes have input mask a=6 (binary 110). In the LAT,
+row 6 has a single nonzero column b=4 with NL−4 = −4, ε(6,4) = −1/2.
+So both S11 and S12 use output mask 4. Output mask on B is (1,0,0,1,0,0).
+
+Round 2 — permute B to E = (1,0,0,0,1,0). Split masks a=4 on S21 and a=2 on S22.
+One useful choice with large |bias| is (b,b')=(2,2): NL(4,2)=+2 and NL(2,2)=−2,
+so ε = 1/4 and ε = −1/4; piling-up inside the round gives
+  ε_round2 = 2 · (1/4) · (−1/4) = −1/8.
+
+Piling-up across the two active rounds gives
+  ε_total = 2 · ε_round1 · ε_round2
+with ε_round1 = 2·(−1/2)·(−1/2) = 1/2, hence
+  ε_total = 2 · (1/2) · (−1/8) = −1/8.
+
+Draw: label each active S-box with (a,b) hex masks; show perm arrows between
+rounds exactly as in Figure 1.
+
+----------------------------------------------------------------------
+3. Total bias
+----------------------------------------------------------------------
+
+From the handout for ℓ = 3: ε(a,b) = (NL(a,b) − 4)/8.
+Using the stacked trail above: total bias ε_total = −1/8.
+
+----------------------------------------------------------------------
+4. Counters for partial K4 (first three bits, guesses 000…111)
+----------------------------------------------------------------------
+
+Bit order: left ciphertext digit is C1 (same as P1 for plaintext strings).
+For each guess (g2,g1,g0) affecting C1C2C3, set Ji = Ci ⊕ gi, form
+H = S^{-1}(J1J2J3), take H1 as the MSB of that 3-bit nibble, and count pairs
+with P1⊕P2⊕P4⊕P5⊕H1 = 0.
+
+Run: python project3_complete.py
+
+Results (# of zeros out of 6):
+  000 → 6
+  001 → 2
+  010 → 0
+  011 → 4
+  100 → 4
+  101 → 2
+  110 → 2
+  111 → 4
+
+----------------------------------------------------------------------
+5. First and third bits of K4
+----------------------------------------------------------------------
+
+The guess farthest from the random baseline 3/6 is 000 with 6/6 zeros, so the
+first three XOR-bits are all 0 under this labeling; in particular the **first**
+and **third** bits are **0** and **0**.
+
+----------------------------------------------------------------------
+6. Why the second bit is not determined by this statistic (conceptually)
+----------------------------------------------------------------------
+
+The counter uses one linear relation: P1⊕P2⊕P4⊕P5⊕H1.  
+After partial decryption, H1 is a nonlinear function of (C1,C2,C3) and the three guessed
+subkey bits. This linear test gives a strong bias for the first/third guessed bits, but it
+does not isolate the middle guessed bit by itself.  
+So this specific statistic is not enough to uniquely determine K4's second bit; a different
+approximation (or more data) is needed to resolve it.
+
+----------------------------------------------------------------------
+Files submitted with code
+----------------------------------------------------------------------
+
+  NLATCalculation.py      — Problem 1 table (PrettyTable)
+  project3_complete.py  — LAT + worked trail summary + Problem–4 counters
+  (screenshot / PDF      — pretty output for graders)
+
