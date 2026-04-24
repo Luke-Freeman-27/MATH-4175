@@ -1,77 +1,140 @@
-MATH 4175 - Project 4 (typed report draft)
+MATH 4175 - Project 4 Report
 Names: Luke Freeman, Yoshwan Pathipati, Diego Penadillo, Hiren Sai Vellanki
 
-----------------------------------------------------------------------
-1) Difference distribution table (DDT)
-----------------------------------------------------------------------
-
-The 8x8 DDT for S = [6,5,1,0,3,2,7,4] is generated in code.
-Run:
+This report contains complete results for Parts 1 through 5 of Project 4.
+All computations were produced by running:
 
   python project4_complete.py
 
-The script prints the full 8x8 table in PrettyTable format.
 
-----------------------------------------------------------------------
-2) Three differential trails from x' = 000001
-----------------------------------------------------------------------
+======================================================================
+Part 1) Difference Distribution Table (8 x 8)
+======================================================================
 
-Trail endpoints used:
-  Tr1 ends at H' = 000001  (H6)
-  Tr2 ends at H' = 000011  (H5,H6)
-  Tr3 ends at H' = 000111  (H4,H5,H6)
+S-box used (from project statement):
+  input 0 1 2 3 4 5 6 7
+  output 6 5 1 0 3 2 7 4
 
-The script prints one maximum-probability trail for each endpoint with:
-  - round-1 S-box output difference B'
-  - after-permutation E'
-  - round-2 S-box output difference B'
-  - final H'
+Computed DDT:
 
-----------------------------------------------------------------------
-3) Total propagation ratios R1, R2, R3
-----------------------------------------------------------------------
+  +---+---+---+---+---+---+---+---+---+
+  |   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+  +---+---+---+---+---+---+---+---+---+
+  | 0 | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+  | 1 | 0 | 4 | 0 | 4 | 0 | 0 | 0 | 0 |
+  | 2 | 0 | 0 | 0 | 0 | 2 | 2 | 2 | 2 |
+  | 3 | 0 | 0 | 0 | 0 | 2 | 2 | 2 | 2 |
+  | 4 | 0 | 0 | 0 | 0 | 2 | 2 | 2 | 2 |
+  | 5 | 0 | 0 | 0 | 0 | 2 | 2 | 2 | 2 |
+  | 6 | 0 | 4 | 4 | 0 | 0 | 0 | 0 | 0 |
+  | 7 | 0 | 0 | 4 | 4 | 0 | 0 | 0 | 0 |
+  +---+---+---+---+---+---+---+---+---+
 
-For each target endpoint above, the script sums probabilities over all
-2-round differential trails that end at that endpoint.
 
-It prints:
-  R1 for Tr1, R2 for Tr2, R3 for Tr3
-in both fraction style and decimal style.
+======================================================================
+Part 2) Three Differential Trails from x' = 000001
+======================================================================
 
-----------------------------------------------------------------------
-4) Filtering and selection of three right 4-tuples
-----------------------------------------------------------------------
+The project asks for three trails starting at P6 and ending at:
+  Tr1: H6            -> H' = 000001
+  Tr2: H5 and H6     -> H' = 000011
+  Tr3: H4, H5, and H6-> H' = 000111
 
-Given tuples (x,y,x*,y*) from the project handout are filtered by:
-  (y XOR y*) upper 3 bits = 000
+Typed trail sketches (difference flow):
 
-This selects exactly three suitable tuples, which the script prints.
+  Tr1:
+    Input difference x' = 000001
+    Round 1 S output B' = 000001
+    After permutation E' = 100000
+    Round 2 S output B' = 100000
+    Final H' = 000001
 
-----------------------------------------------------------------------
-5) Cryptanalysis for K4 last three bits
-----------------------------------------------------------------------
+  Tr2:
+    Input difference x' = 000001
+    Round 1 S output B' = 000001
+    After permutation E' = 100000
+    Round 2 S output B' = 110000
+    Final H' = 000011
 
-For each key guess k in 000..111:
-  - compute c1 using Tr1 condition
-  - compute c2 using Tr2 condition
-  - compute c3 using Tr3 condition
-  - compute weighted score:
-      C = R1*c1 + R2*c2 + R3*c3
+  Tr3:
+    Input difference x' = 000001
+    Round 1 S output B' = 000001
+    After permutation E' = 100000
+    Round 2 S output B' = 111000
+    Final H' = 000111
 
-The script prints a table with columns:
-  K4(last3), c1, c2, c3, C
 
-Recovered answer:
-  The best-scoring key is reported at the end of script output as the
-  recovered last three bits of K4.
+======================================================================
+Part 3) Total Propagation Ratios R1, R2, R3
+======================================================================
 
-----------------------------------------------------------------------
-Submission files in this folder
-----------------------------------------------------------------------
+From the computed trails and full trail-sum by endpoint:
 
-  project4.pdf              - assignment instructions
-  WorkForParts1thru4.pdf    - existing handwritten/figure work
-  DDT.py                    - prior DDT helper
-  DiffTable.py              - prior DDT helper
-  project4_complete.py      - full end-to-end Project 4 script
-  Project4_Report.txt       - this typed report draft
+  R1 = 1/8 = 0.125000
+  R2 = 1/8 = 0.125000
+  R3 = 1/8 = 0.125000
+
+
+======================================================================
+Part 4) Filtering and Selection of Three Right 4-tuples
+======================================================================
+
+Given 4-tuples (x, y, x*, y*):
+
+  (100111, 100100, 100110, 111110)
+  (000111, 110010, 000110, 110110)
+  (001100, 111001, 001101, 100000)
+  (011000, 011101, 011001, 011111)
+  (001000, 001101, 001001, 000011)
+  (011010, 101001, 011011, 101000)
+
+Filtering rule applied:
+  keep tuples where the upper 3 bits of (y xor y*) are 000.
+
+Selected right 4-tuples:
+
+  (000111, 110010, 000110, 110110)
+  (011000, 011101, 011001, 011111)
+  (011010, 101001, 011011, 101000)
+
+
+======================================================================
+Part 5) Cryptanalysis for Last 3 Bits of K4
+======================================================================
+
+For each key guess k in {000,...,111}:
+  c1 counts Tr1 matches,
+  c2 counts Tr2 matches,
+  c3 counts Tr3 matches,
+  C = R1*c1 + R2*c2 + R3*c3
+
+With R1 = R2 = R3 = 1/8, the final table is:
+
+  +-----------+----+----+----+----------+
+  | K4(last3) | c1 | c2 | c3 |    C     |
+  +-----------+----+----+----+----------+
+  |    000    | 1  | 0  | 1  | 0.250000 |
+  |    001    | 1  | 0  | 1  | 0.250000 |
+  |    010    | 1  | 0  | 1  | 0.250000 |
+  |    011    | 1  | 1  | 1  | 0.375000 |
+  |    100    | 0  | 0  | 0  | 0.000000 |
+  |    101    | 0  | 0  | 0  | 0.000000 |
+  |    110    | 0  | 0  | 0  | 0.000000 |
+  |    111    | 0  | 1  | 0  | 0.125000 |
+  +-----------+----+----+----+----------+
+
+Final result:
+  The maximum weighted count C is at key guess 011.
+  Therefore, the recovered last three bits of subkey K4 are:
+
+    K4(last three bits) = 011
+
+
+======================================================================
+Files Included for Submission
+======================================================================
+
+  project4_complete.py      full code for Parts 1 to 5
+  Project4_Report.txt       typed report (this file)
+  Project4_Final_Report.pdf typed PDF version of this report
+  WorkForParts1thru4.pdf    supplementary prior project work
