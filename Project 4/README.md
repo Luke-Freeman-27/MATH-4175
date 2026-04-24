@@ -5,3 +5,9 @@ PURPOSE: Make a difference distribution table, find three distribution trails, c
 Setup:
 
 Run:
+`python -m pip install prettytable`
+
+- Full Project 4 workflow: `python project4_complete.py`
+- DDT only helpers: `python DDT.py` or `python DiffTable.py`
+
+Typed write-up draft is in `Project4_Report.txt`.

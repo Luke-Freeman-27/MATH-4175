@@ -1,0 +1,77 @@
+MATH 4175 - Project 4 (typed report draft)
+Names: Luke Freeman, Yoshwan Pathipati, Diego Penadillo, Hiren Sai Vellanki
+
+----------------------------------------------------------------------
+1) Difference distribution table (DDT)
+----------------------------------------------------------------------
+
+The 8x8 DDT for S = [6,5,1,0,3,2,7,4] is generated in code.
+Run:
+
+  python project4_complete.py
+
+The script prints the full 8x8 table in PrettyTable format.
+
+----------------------------------------------------------------------
+2) Three differential trails from x' = 000001
+----------------------------------------------------------------------
+
+Trail endpoints used:
+  Tr1 ends at H' = 000001  (H6)
+  Tr2 ends at H' = 000011  (H5,H6)
+  Tr3 ends at H' = 000111  (H4,H5,H6)
+
+The script prints one maximum-probability trail for each endpoint with:
+  - round-1 S-box output difference B'
+  - after-permutation E'
+  - round-2 S-box output difference B'
+  - final H'
+
+----------------------------------------------------------------------
+3) Total propagation ratios R1, R2, R3
+----------------------------------------------------------------------
+
+For each target endpoint above, the script sums probabilities over all
+2-round differential trails that end at that endpoint.
+
+It prints:
+  R1 for Tr1, R2 for Tr2, R3 for Tr3
+in both fraction style and decimal style.
+
+----------------------------------------------------------------------
+4) Filtering and selection of three right 4-tuples
+----------------------------------------------------------------------
+
+Given tuples (x,y,x*,y*) from the project handout are filtered by:
+  (y XOR y*) upper 3 bits = 000
+
+This selects exactly three suitable tuples, which the script prints.
+
+----------------------------------------------------------------------
+5) Cryptanalysis for K4 last three bits
+----------------------------------------------------------------------
+
+For each key guess k in 000..111:
+  - compute c1 using Tr1 condition
+  - compute c2 using Tr2 condition
+  - compute c3 using Tr3 condition
+  - compute weighted score:
+      C = R1*c1 + R2*c2 + R3*c3
+
+The script prints a table with columns:
+  K4(last3), c1, c2, c3, C
+
+Recovered answer:
+  The best-scoring key is reported at the end of script output as the
+  recovered last three bits of K4.
+
+----------------------------------------------------------------------
+Submission files in this folder
+----------------------------------------------------------------------
+
+  project4.pdf              - assignment instructions
+  WorkForParts1thru4.pdf    - existing handwritten/figure work
+  DDT.py                    - prior DDT helper
+  DiffTable.py              - prior DDT helper
+  project4_complete.py      - full end-to-end Project 4 script
+  Project4_Report.txt       - this typed report draft
