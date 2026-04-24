@@ -35,44 +35,119 @@ Computed DDT:
 Part 2) Three Differential Trails from x' = 000001
 ======================================================================
 
-The project asks for three trails starting at P6 and ending at:
-  Tr1: H6            -> H' = 000001
-  Tr2: H5 and H6     -> H' = 000011
-  Tr3: H4, H5, and H6-> H' = 000111
+Bit indexing (used throughout):
+  A 6-bit block is written H = H1 H2 H3 H4 H5 H6 with H1 the MSB and
+  H6 the LSB. Starting at P6 therefore means only bit P6 (the LSB) of
+  the plaintext pair differs, i.e., x' = 000001.
 
-Typed trail sketches (difference flow):
+Why each trail ends where it does:
+  "Tr1 ends at H6"             -> only bit H6 differs -> H' = 000001
+  "Tr2 ends at H5 and H6"      -> bits H5,H6 differ   -> H' = 000011
+  "Tr3 ends at H4, H5, and H6" -> bits H4,H5,H6 diff  -> H' = 000111
+
+Typed trail sketches (difference flow through the two rounds):
 
   Tr1:
-    Input difference x' = 000001
-    Round 1 S output B' = 000001
-    After permutation E' = 100000
-    Round 2 S output B' = 100000
-    Final H' = 000001
+    Input difference x'    = 000001
+    Round 1 S output B'    = 000001
+    After permutation E'   = P(000001) = 100000
+    Round 2 S output B'    = 100000
+    After permutation H'   = P(100000) = 000001
 
   Tr2:
-    Input difference x' = 000001
-    Round 1 S output B' = 000001
-    After permutation E' = 100000
-    Round 2 S output B' = 110000
-    Final H' = 000011
+    Input difference x'    = 000001
+    Round 1 S output B'    = 000001
+    After permutation E'   = P(000001) = 100000
+    Round 2 S output B'    = 110000
+    After permutation H'   = P(110000) = 000011
 
   Tr3:
-    Input difference x' = 000001
-    Round 1 S output B' = 000001
-    After permutation E' = 100000
-    Round 2 S output B' = 111000
-    Final H' = 000111
+    Input difference x'    = 000001
+    Round 1 S output B'    = 000001
+    After permutation E'   = P(000001) = 100000
+    Round 2 S output B'    = 111000
+    After permutation H'   = P(111000) = 000111
 
 
 ======================================================================
 Part 3) Total Propagation Ratios R1, R2, R3
 ======================================================================
 
-From the computed trails and full trail-sum by endpoint:
+For a 3-bit S-box the propagation ratio is
+  Rp(a', b') = ND(a', b') / 2^3 = ND(a', b') / 8
+where ND(a', b') is read directly from the DDT in Part 1.
+
+The total propagation ratio of a two-round trail is the product of
+Rp over every ACTIVE S-box (input diff != 000). An inactive S-box
+(input diff = 000) must output 000 with ND(0,0)/8 = 8/8 = 1, so
+inactive S-boxes contribute a factor of 1.
+
+----------------------------------------------------------------------
+Round 1 (the same for all three trails, because the three trails
+share the Round 1 S-box output B' = 000001):
+
+  Input x' = 000001, split into (upper 3 bits, lower 3 bits) = (000, 001).
+    Upper S-box Round 1:  a' = 000                 INACTIVE   factor 1
+    Lower S-box Round 1:  a' = 001, b' = 001       ACTIVE
+      ND(001, 001) = DDT[1][1] = 4
+      Rp           = 4 / 8 = 1/2
+
+  Round 1 S output B' = 000001
+  Permutation         E' = P(000001) = 100000
+
+  Round 2 S-box inputs = split(E') = (100, 000).
+    Upper S-box Round 2:  a' = 100                 ACTIVE
+    Lower S-box Round 2:  a' = 000                 INACTIVE   factor 1
+
+----------------------------------------------------------------------
+Tr1  (H' = 000001, so B2' = P^{-1}(000001) = 100000):
+
+  Upper S-box Round 2:  a' = 100, b' = 100
+    ND(100, 100) = DDT[4][4] = 2
+    Rp           = 2 / 8 = 1/4
+
+  After permutation H' = P(100000) = 000001   OK
+
+  R1 = Rp(Round1 lower) * Rp(Round2 upper)
+     = (1/2) * (1/4) = 1/8 = 0.125
+
+----------------------------------------------------------------------
+Tr2  (H' = 000011, so B2' = P^{-1}(000011) = 110000):
+
+  Upper S-box Round 2:  a' = 100, b' = 110
+    ND(100, 110) = DDT[4][6] = 2
+    Rp           = 2 / 8 = 1/4
+
+  After permutation H' = P(110000) = 000011   OK
+
+  R2 = (1/2) * (1/4) = 1/8 = 0.125
+
+----------------------------------------------------------------------
+Tr3  (H' = 000111, so B2' = P^{-1}(000111) = 111000):
+
+  Upper S-box Round 2:  a' = 100, b' = 111
+    ND(100, 111) = DDT[4][7] = 2
+    Rp           = 2 / 8 = 1/4
+
+  After permutation H' = P(111000) = 000111   OK
+
+  R3 = (1/2) * (1/4) = 1/8 = 0.125
+
+----------------------------------------------------------------------
+Summary:
 
   R1 = 1/8 = 0.125000
   R2 = 1/8 = 0.125000
   R3 = 1/8 = 0.125000
+
+Note on trail uniqueness:
+  For each target H' in {000001, 000011, 000111} there is exactly ONE
+  non-zero probability trail. The alternative Round 1 lower output
+  b' = 011 (also with ND/8 = 1/2) produces E' = P(000011) = 110000,
+  whose Round 2 upper input a' = 110 can only map to output diffs 001
+  or 010 (from DDT row 6), giving H' in {000100, 000010} -- neither
+  matches any target. Hence the best-trail probability equals the
+  total propagation ratio, R1 = R2 = R3 = 1/8.
 
 
 ======================================================================
@@ -89,7 +164,34 @@ Given 4-tuples (x, y, x*, y*):
   (011010, 101001, 011011, 101000)
 
 Filtering rule applied:
-  keep tuples where the upper 3 bits of (y xor y*) are 000.
+  keep tuples where the upper 3 bits of (y XOR y*) are 000.
+
+Justification of the rule:
+  All three trails have H' whose upper 3 bits are 000
+    Tr1 H' = 000001   upper 3 bits = 000
+    Tr2 H' = 000011   upper 3 bits = 000
+    Tr3 H' = 000111   upper 3 bits = 000
+  The ciphertexts satisfy y = H XOR K4 and y* = H* XOR K4, so
+    y XOR y* = H XOR H* = H'.
+  Therefore a 4-tuple that can be a right tuple for ANY of the three
+  trails MUST have upper 3 bits of (y XOR y*) equal to 000. Tuples
+  failing this test cannot follow any of the three characteristics
+  and are discarded as wrong pairs.
+
+Applying the rule to each given tuple:
+
+  (100111, 100100, 100110, 111110):
+      y XOR y* = 100100 XOR 111110 = 011010  upper = 011  REJECT
+  (000111, 110010, 000110, 110110):
+      y XOR y* = 110010 XOR 110110 = 000100  upper = 000  KEEP
+  (001100, 111001, 001101, 100000):
+      y XOR y* = 111001 XOR 100000 = 011001  upper = 011  REJECT
+  (011000, 011101, 011001, 011111):
+      y XOR y* = 011101 XOR 011111 = 000010  upper = 000  KEEP
+  (001000, 001101, 001001, 000011):
+      y XOR y* = 001101 XOR 000011 = 001110  upper = 001  REJECT
+  (011010, 101001, 011011, 101000):
+      y XOR y* = 101001 XOR 101000 = 000001  upper = 000  KEEP
 
 Selected right 4-tuples:
 
